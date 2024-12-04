@@ -4,7 +4,7 @@ import HomePage from "./components/HomePage.jsx";
 import SignUpPage from "./components/SignUpPage.jsx";
 import LoginPage from "./components/loginPage.jsx";
 import SettingsPage from "./components/SettingsPage.jsx";
-import ProfilePage from "./ProfilePage.jsx";
+import ProfilePage from "./components/Profilepage.jsx";
 import { useAuthStore } from "./store/useAuthStore.js";
 import { useEffect } from "react";
 

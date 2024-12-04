@@ -77,40 +77,40 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
     try {
-        res.cookie("token" , "" , {maxage:0});
+        res.clearCookie("jwt", { httpOnly: true , secure : false}); 
         console.log("User logged out successfully .")
-        return res.status(200).json({message : "User logged out successfully ."})
+        return res.status(200).json({ message: "User logged out successfully ." })
     } catch (error) {
         console.log("Internal Server error .");
-        return res.status(500).json({message : "Internal Server error ."})
+        return res.status(500).json({ message: "Internal Server error ." })
     }
 }
 
-export const updateProfile = async (req , res) => {
+export const updateProfile = async (req, res) => {
     try {
-        const {profilePic} = req.body;
+        const { profilePic } = req.body;
         const userId = req.user._id;
 
         if (!profilePic) {
             console.log("Profile picture is required");
-            return res.status(400).json({message : "Profile picture is required"});
+            return res.status(400).json({ message: "Profile picture is required" });
         }
 
         const uploadResponse = cloudinary.uploader.upload(profilePic);
-        const updatedUser = await User.findByIdAndUpdate(userId , {profilePic :(await uploadResponse).secure_url} , {new:true})
+        const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: (await uploadResponse).secure_url }, { new: true })
 
-        res.status(200).json({updatedUser});
+        res.status(200).json({ updatedUser });
     } catch (error) {
         console.log(`Internal Server Error : ${error}`);
-        return res.status(500).json({message: `Internal Server Error : ${error}`})
+        return res.status(500).json({ message: `Internal Server Error : ${error}` })
     }
 }
 
-export const checkAuth = (req , res) => {
+export const checkAuth = (req, res) => {
     try {
         res.status(200).json(req.user);
     } catch (error) {
         console.log(`Error in CheckAuth : ${error.message}`)
-        res.status(500).json({message:"Internal Server error"});
+        res.status(500).json({ message: "Internal Server error" });
     }
 }

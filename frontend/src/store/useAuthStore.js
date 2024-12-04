@@ -27,7 +27,7 @@ export const useAuthStore = create((set) => ({
         try {
             const res = await axiosInstance.post("/auth/signup" , data);
             set({authUser:res.data});
-            toast.success("Successfully Sign-Up !")
+            toast.success("Successfully Signed-Up !")
         } catch (error) {
             console.log("Error while signingUp : " , error);
             toast.error(error.response.data.message);
@@ -36,10 +36,25 @@ export const useAuthStore = create((set) => ({
         }
     } ,
 
+    login : async (data) => {
+        set({isLoggingIn:true});
+        try {
+            const res = await axiosInstance.post("/auth/login" , data);
+            toast.success("Logged-In Successfully !");
+            set({authUser : res.data});
+        } catch (error) {
+            console.log("Error while logging-In : " , error);
+            toast.error("Invalid Credentials !");
+        } finally {
+            set({isLoggingIn:false})
+        }
+    },
+
     logout : async () => {
         try {
             await axiosInstance.post("/auth/logout");
             set({authUser:null});
+            toast.success("Logged out successfully");
         } catch (error) {
             console.log("Error while logging out : " , error);
             toast.error(error.response.data.message);
