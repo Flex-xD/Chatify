@@ -2,26 +2,26 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 
-const Profilepage = () => {
-
+const ProfilePage = () => {
     const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
     const [selectedImg, setSelectedImg] = useState(null);
 
-
     const handleImageUpload = async (e) => {
-        e.preventDefault();
-        const file = e.target.file[0];
-        if (!file) {
-            return;
-        }
+        const file = e.target.files[0];
+        if (!file) return;
+
         const reader = new FileReader();
+
         reader.readAsDataURL(file);
+
         reader.onload = async () => {
-            const base64image = reader.result;
-            setSelectedImg(base64image);
-            await updateProfile({ profilePic: base64image });
-        }
-    }
+            const base64Image = reader.result;
+            console.log("Base64Image : " , base64Image)
+            setSelectedImg(base64Image);
+            await updateProfile({ profilePic: base64Image });
+        };
+    };
+
     return (
         <div className="h-screen pt-20">
             <div className="max-w-2xl mx-auto p-4 py-8">
@@ -48,7 +48,7 @@ const Profilepage = () => {
                     p-2 rounded-full cursor-pointer 
                     transition-all duration-200
                     ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
-                    `}
+                `}
                             >
                                 <Camera className="w-5 h-5 text-base-200" />
                                 <input
@@ -100,7 +100,6 @@ const Profilepage = () => {
                 </div>
             </div>
         </div>
-    )
-}
-
-export default Profilepage
+    );
+};
+export default ProfilePage;
