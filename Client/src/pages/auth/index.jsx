@@ -4,6 +4,7 @@ import Vicotry from "../../assets/victory.svg";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/tabs.jsx";
 import { Input } from "../../components/ui/input.jsx";
 import {Button } from "../../components/ui/button.jsx";
+import { toast } from "sonner";
 
 const Auth = () => {
 
@@ -11,12 +12,33 @@ const Auth = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, SetConfirmPassword] = useState("");
 
+    const validateSignup = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!email.length) {
+            toast.error("Email is required")
+            return false;
+        } else if (!emailPattern.test(email)) {
+            toast.error("Follow the correct email pattern !")
+            return false;
+        } else if (!password.length) {
+            toast.error("Password is required !")
+            return false;
+        } else if (!confirmPassword.length) {
+            toast.error("confirmPassword is required !")
+            return false;
+        } else if (password !== confirmPassword) {
+            toast.error("Passoword should match confirmPassword !")
+            return false;
+        } 
+        return true;
+    }
+
     const handleLogin = async () => {
 
     }
 
     const handleSignup = async () => {
-
+        validateSignup()
     }
 
     return (
@@ -40,14 +62,14 @@ const Auth = () => {
                             </TabsList>
                             <TabsContent className="flex flex-col gap-5 mt-2" value="login">
                                 <Input
-                                    placeHolder="Email"
+                                    placeholder="Email"
                                     type="email"
                                     className="rounded-full p-4 mt-5"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                                 <Input
-                                    placeHolder="Password"
+                                    placeholder="Password"
                                     type="password"
                                     className="rounded-full p-4"
                                     value={password}
@@ -58,21 +80,21 @@ const Auth = () => {
                             </TabsContent>
                             <TabsContent className="flex flex-col gap-5" value="signup">
                                 <Input
-                                    placeHolder="Email"
+                                    placeholder="Email"
                                     type="email"
                                     className="rounded-full p-4 mt-5"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                                 <Input
-                                    placeHolder="Password"
+                                    placeholder="Password"
                                     type="password"
                                     className="rounded-full p-4"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <Input
-                                    placeHolder="Confirm Password"
+                                    placeholder="Confirm Password"
                                     type="password"
                                     className="rounded-full p-4"
                                     value={confirmPassword}
