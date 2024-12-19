@@ -1,16 +1,35 @@
 import { useState } from "react";
+import { useNavigate } from "react"
+import { apiClient } from "../../lib/axios.js";
 import Background from "../../assets/login2.png";
 import Vicotry from "../../assets/victory.svg";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/tabs.jsx";
 import { Input } from "../../components/ui/input.jsx";
-import {Button } from "../../components/ui/button.jsx";
+import { Button } from "../../components/ui/button.jsx";
 import { toast } from "sonner";
+import { LOGIN_ROUTES, SIGNUP_ROUTES } from "../../utils/constants.js";
 
 const Auth = () => {
 
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, SetConfirmPassword] = useState("");
+
+    const validateLogin = () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!email.length) {
+            toast.error("Email is required")
+            return false;
+        } else if (!emailPattern.test(email)) {
+            toast.error("Follow the correct email pattern !")
+            return false;
+        } else if (!password.length) {
+            toast.error("Password is required !")
+            return false;
+        }
+        return true;
+    }
 
     const validateSignup = () => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -27,18 +46,51 @@ const Auth = () => {
             toast.error("confirmPassword is required !")
             return false;
         } else if (password !== confirmPassword) {
-            toast.error("Passoword should match confirmPassword !")
+            toast.error("confirmPassoword should match Password !")
             return false;
-        } 
+        }
         return true;
     }
 
     const handleLogin = async () => {
-
+        if (validateLogin()) {
+            try {
+                const response = await apiClient.post(LOGIN_ROUTES, { email, password }, { withCredentials: true });
+                console.log({ response });
+                if (response.data.user) {
+                    if (response.data.user.profile) {
+                        navigate("/chat")
+                    } else {
+                        navigate("/profile")
+                    }
+                }
+                toast.success("User Successfully logged-In !");
+            } catch (error) {
+                console.log(error)
+                if (error.response || error.response.data.message) {
+                    toast.error(error.response.data.message);
+                }
+            }
+        }
     }
 
     const handleSignup = async () => {
-        validateSignup()
+        if (validateSignup()) {
+            try {
+                const response = await apiClient.post(SIGNUP_ROUTES, { email, password }, { withCredentials: true });
+                console.log({ response });
+                if (response.data.user) {
+                    navigate("/profile")
+                }
+                toast.success("User Successfully Registered !");
+            } catch (error) {
+                if (error.response || error.response.message.data) {
+                    toast.error(error.response.data.message);
+                } else {
+                    toast.error("Something went wrong !")
+                }
+            }
+        }
     }
 
     return (
@@ -106,7 +158,7 @@ const Auth = () => {
                     </div>
                 </div>
                 <div className="hidden xl:flex justify-center items-center">
-                    <img src={Background} alt="Login logo" className="h-[500px]"/>
+                    <img src={Background} alt="Login logo" className="h-[500px]" />
                 </div>
             </div>
         </div>
