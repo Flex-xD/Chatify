@@ -1,5 +1,6 @@
+import {useNavigate} from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react"
+import { useAppStore } from "../../store/index.js";
 import { apiClient } from "../../lib/axios.js";
 import Background from "../../assets/login2.png";
 import Vicotry from "../../assets/victory.svg";
@@ -12,6 +13,7 @@ import { LOGIN_ROUTES, SIGNUP_ROUTES } from "../../utils/constants.js";
 const Auth = () => {
 
     const navigate = useNavigate();
+    const {setUserInfo} = useAppStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, SetConfirmPassword] = useState("");
@@ -56,6 +58,7 @@ const Auth = () => {
         if (validateLogin()) {
             try {
                 const response = await apiClient.post(LOGIN_ROUTES, { email, password }, { withCredentials: true });
+                setUserInfo(response.data.user)
                 console.log({ response });
                 if (response.data.user) {
                     if (response.data.user.profile) {
@@ -78,6 +81,7 @@ const Auth = () => {
         if (validateSignup()) {
             try {
                 const response = await apiClient.post(SIGNUP_ROUTES, { email, password }, { withCredentials: true });
+                setUserInfo(response.data.user)
                 console.log({ response });
                 if (response.data.user) {
                     navigate("/profile")
@@ -107,7 +111,7 @@ const Auth = () => {
                         </p>
                     </div>
                     <div className="flex items-center justify-center w-full">
-                        <Tabs className="w-3/4">
+                        <Tabs className="w-3/4" defaultValue="login">
                             <TabsList className="bg-transparent rounded-none w-full">
                                 <TabsTrigger value="login" className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300">Login</TabsTrigger>
                                 <TabsTrigger value="signup" className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300">Signup</TabsTrigger>
