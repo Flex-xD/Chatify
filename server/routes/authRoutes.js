@@ -7,6 +7,6 @@ const router = express.Router();
 router.post("/signup" , authController.signupController);
 router.post("/login" ,  authController.loginController);
 router.get("/user-info" , verifyToken , authController.getUserInfo);
-
+router.post("/update-profile" , verifyToken , authController.updateProfile);
 
 export default router;
