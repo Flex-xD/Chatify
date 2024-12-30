@@ -9,7 +9,7 @@ import { Input } from "../../components/ui/input.jsx"
 import { Button } from "../../components/ui/button.jsx"
 import { toast } from "sonner";
 import { apiClient } from "../../lib/axios.js"
-import { UPDATE_PROFILE_ROUTE } from "../../utils/constants.js";
+import { ADD_PROFILE_IMAGE_ROUTE, HOST, REMOVE_PROFILE_IMAGE_ROUTE, UPDATE_PROFILE_ROUTE } from "../../utils/constants.js";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -27,7 +27,11 @@ const Profile = () => {
             setLastName(userInfo.lastName);
             setSelectedColor(userInfo.color);
         }
-    } , [userInfo])
+
+        if(userInfo.image) {
+            setImage(`${HOST}/${userInfo.image}`)
+        }
+    }, [userInfo])
 
     const validateProfile = () => {
         if (!firstName) {
@@ -46,11 +50,11 @@ const Profile = () => {
             try {
                 const response = await apiClient.post(UPDATE_PROFILE_ROUTE,
                     {
-                        firstName, 
+                        firstName,
                         lastName,
                         color: selectedColor
-                    } , {withCredentials:true});
-                if(response.status === "200" && response.data) {
+                    }, { withCredentials: true });
+                if (response.status === "200" && response.data) {
                     setUserInfo(...response.data);
                     toast.success("Profile Setuped ! ")
                     navigate("/chat");
@@ -62,11 +66,42 @@ const Profile = () => {
     };
 
     const handleNavigate = () => {
-        if(userInfo.profileSetup) {
+        if (userInfo.profileSetup) {
             Navigate("/chat");
         } else {
             toast.error("Please setup profile first !")
         }
+    }
+
+    const handleFileInputClick = () => {
+        fileInputRef.current.click();
+    }
+
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        console.log({ file });
+        if (file) {
+            const formData = new FormData();
+            formData.append("profile-image", file);
+            const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, { withCredentials: true });
+            if (response.status === 200 && response.data.image) {
+                setUserInfo({ ...userInfo, image: response.data.image });
+                toast.success("Image uploaded Successfully !")
+            }
+        }
+    };
+
+    const handleDeleteImage = async () => {
+        try {
+            const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE , {withCredentials:true});
+            if(response.status === 200) {
+                setUserInfo({...userInfo , image:null});
+                toast.success("Image removed successfully !")
+                setImage(null);
+            }                                                              
+            } catch (error) {
+                console.log(error);
+        }        
     }
 
     return (
@@ -91,13 +126,13 @@ const Profile = () => {
                             }
                         </Avatar>
                         {
-                            hovered && <div className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer rounded-full">
+                            hovered && <div className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer rounded-full" onClick={image ? handleDeleteImage : handleFileInputClick}>
                                 {
                                     image ? <FaTrash className="cursor-pointer text-3xl text-white" /> : <FaPlus className="cursor-pointer text-3xl text-white" />
                                 }
                             </div>
                         }
-                        {/* <input type="text" /> */}
+                        <input type="file" ref={fileInputRef} className="hidden" onChange={handleImageChange} name="profile-image" accept=".jpg , .png  , .jpeg  , .svg  , .webp" />
                     </div>
                     <div className="flex min-w-32 md:min-w-64 flex-col gap-5 text-white items-center justify-center">
                         <div className="w-full">
