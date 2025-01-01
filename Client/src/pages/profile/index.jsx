@@ -56,7 +56,7 @@ const Profile = () => {
                     }, { withCredentials: true });
                 if (response.status === "200" && response.data) {
                     setUserInfo(...response.data);
-                    toast.success("Profile Setuped ! ")
+                    toast.success("Profile Setup-ed ! ")
                     navigate("/chat");
                 }
             } catch (error) {
