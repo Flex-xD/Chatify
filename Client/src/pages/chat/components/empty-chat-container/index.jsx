@@ -11,7 +11,7 @@ const EmptyChatContainer = () => {
                 options={animationDefaultOptions}
             />
             <div className="text-opacity-80 text-white flex flex-col items-center gap-5 mt-10 lg:text-4xl text-3xl transition-all duration-300 text-center">
-                <h3 className="poppins-medium ">
+                <h3 className="poppins-medium underline underline-offset-4 decoration-gray-500 decoration-1">
                     Hi <span className="text-purple-500 font-bold">!</span> Welcome to
                     <span className="text-purple-500 font-bold "> Chatify !</span>
                 </h3>
