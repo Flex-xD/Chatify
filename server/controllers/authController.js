@@ -114,32 +114,37 @@ export const getUserInfo = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-    const { userId } = req;
-    const { firstName, lastName, color } = req.body;
-    if (!firstName || !lastName) {
-        res.status(400).json({ message: "FirstName , LastName and color are required !" });
+    try {
+        const { userId } = req;
+        const { firstName, lastName, color } = req.body;
+        if (!firstName || !lastName) {
+            res.status(400).json({ message: "FirstName , LastName and color are required !" });
+        }
+    
+        const userData = await User.findByIdAndUpdate(userId,
+            {
+                firstName,
+                lastName,
+                color,
+                profileSetup: true,
+            }, {
+            new: true, runValidators: true
+        }
+        )
+        return res.status(200).json({
+            email: userData.email,
+            password: userData.password,
+            profileSetup: userData.profileSetup,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            image: userData.image,
+            color: userData.color,
+            id: userData._id
+        })
+    } catch (error) {
+        console.log({error});
+        return res.status(500).json({message:error.message});
     }
-
-    const userData = await User.findByIdAndUpdate(userId,
-        {
-            firstName,
-            lastName,
-            color,
-            profileSetup: true,
-        }, {
-        new: true, runValidators: true
-    }
-    )
-    return res.status(200).json({
-        email: userData.email,
-        password: userData.password,
-        profileSetup: userData.profileSetup,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        image: userData.image,
-        color: userData.color,
-        id: userData._id
-    })
 }
 
 export const addProfileImage = async (req , res) => {
@@ -181,5 +186,15 @@ export const removeProfileImage = async (req , res) => {
     } catch (error) {
         console.log({error});
         res.status(400).json({message:"Internal server error !"})
+    }
+}
+
+export const logout = async (req , res) => {
+    try {
+        await res.cookie("jwt" , "" , {maxAge:1 , secure:true , sameSite:false})
+        return res.status(200).json({message:"User logged out successfully !"});
+    } catch (error) {
+        console.log({error});
+        return res.status(500).json({message: error.message});
     }
 }

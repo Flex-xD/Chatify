@@ -1,11 +1,29 @@
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar"
 import { useAppStore } from "../../../../../../store"
-import { HOST } from "../../../../../../utils/constants";
-import {getColor} from "../../../../../../lib/utils.js"
+import { HOST, LOGOUT_ROUTE } from "../../../../../../utils/constants";
+import { getColor } from "../../../../../../lib/utils.js"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../../../components/ui/tooltip.jsx"
+import { FaUserEdit } from "react-icons/fa";
+import {apiClient} from "../../../../../../lib/axios.js"
+import { IoPowerSharp } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 function ProfileInfo() {
+    const { userInfo , setUserInfo} = useAppStore();
+    const navigate = useNavigate();
 
-    const {userInfo} = useAppStore();
+    const logout = async () => {
+        try {
+            const response = await apiClient.post(LOGOUT_ROUTE , {} , {withCredentials:true});
+            if (response.status === 200) {
+                navigate("/login");
+                setUserInfo(null);
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     return (
         <div className="absolute bottom-0 h-16 flex items-center justify-between px-10 w-full bg-[#2a2b33]">
             <div className="h-12 w-12 relative ">
@@ -25,6 +43,32 @@ function ProfileInfo() {
                 {
                     userInfo.firstName && userInfo.lastName ? `${userInfo.firstName} ${userInfo.lastName}` : ""
                 }
+            </div>
+            <div className="flex gap-5">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <FaUserEdit className="font-medium text-purple-500 text-2xl"
+                                onClick={() => navigate("/profile")}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#1c1b1e] border-none text-white">
+                            Edit Profile
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <IoPowerSharp className="font-medium text-purple-500 text-2xl"
+                                onClick={logout}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#1c1b1e] border-none text-white">
+                            Logout
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
         </div>
     )

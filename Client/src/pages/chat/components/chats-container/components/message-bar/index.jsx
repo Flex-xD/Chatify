@@ -6,12 +6,9 @@ import EmojiPicker from "emoji-picker-react";
 import { useEffect } from "react";
 
 function MessageBar() {
-
-
     const emojiRef = useRef();
     const [message, setMessage] = useState("");
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-
 
     useEffect(() => {
         function handleClickOutside(event) {

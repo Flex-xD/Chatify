@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "../../store";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate ,useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5"
 import { Avatar, AvatarImage } from "../../components/ui/avatar.jsx"
 import { getColor, colors } from "../../lib/utils.js"
@@ -28,7 +28,7 @@ const Profile = () => {
             setSelectedColor(userInfo.color);
         }
 
-        if(userInfo.image) {
+        if (userInfo.image) {
             setImage(`${HOST}/${userInfo.image}`)
         }
     }, [userInfo])
@@ -44,26 +44,6 @@ const Profile = () => {
         }
         return true;
     }
-
-    const saveChanges = async () => {
-        if (validateProfile()) {
-            try {
-                const response = await apiClient.post(UPDATE_PROFILE_ROUTE,
-                    {
-                        firstName,
-                        lastName,
-                        color: selectedColor
-                    }, { withCredentials: true });
-                if (response.status === "200" && response.data) {
-                    setUserInfo(...response.data);
-                    toast.success("Profile Setup-ed ! ")
-                    navigate("/chat");
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    };
 
     const handleNavigate = () => {
         if (userInfo.profileSetup) {
@@ -93,16 +73,36 @@ const Profile = () => {
 
     const handleDeleteImage = async () => {
         try {
-            const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE , {withCredentials:true});
-            if(response.status === 200) {
-                setUserInfo({...userInfo , image:null});
+            const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, { withCredentials: true });
+            if (response.status === 200) {
+                setUserInfo({ ...userInfo, image: null });
                 toast.success("Image removed successfully !")
                 setImage(null);
-            }                                                              
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const saveChanges = async () => {
+        if (validateProfile()) {
+            try {
+                const response = await apiClient.post(UPDATE_PROFILE_ROUTE,
+                    {
+                        firstName,
+                        lastName,
+                        color: selectedColor
+                    }, { withCredentials: true });
+                if (response.status === 200 && response.data) {
+                    setUserInfo(response.data);
+                    toast.success("Profile Setuped ! ")
+                    navigate("/chat")
+                }
             } catch (error) {
                 console.log(error);
-        }        
-    }
+            }
+        }
+    };
 
     return (
         <div className="bg-[#1b1c24] h-[100vh] flex items-center justify-center flex-col gap-10">
