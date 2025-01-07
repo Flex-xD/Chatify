@@ -16,6 +16,8 @@ import {
 import { Input } from "@/components/ui/input"
 import Lottie from "react-lottie";
 import { animationDefaultOptions } from "../../../../../../lib/utils";
+import { apiClient } from "../../../../../../lib/axios.js"
+import { SEARCH_CONTACTS_ROUTES } from "../../../../../../utils/constants";
 
 function NewDM() {
 
@@ -24,7 +26,18 @@ function NewDM() {
     const [searchedContacts, setSearchedContacts] = useState([]);
 
     const searchContacts = async (searchTerm) => {
-
+        try {
+            if (searchTerm.length > 0) {
+                const response = await apiClient.post(SEARCH_CONTACTS_ROUTES, { searchTerm }, { withCredentials: true });
+                if (response.status === 200 && response.data.contacts) {
+                    setSearchedContacts(response.data.contacts);
+                }
+            } else {
+                setSearchedContacts([]);
+            };
+        } catch (error) {
+            console.log({ error });
+        }
     }
 
     return (
@@ -55,7 +68,7 @@ function NewDM() {
                         </DialogDescription>
                     </DialogHeader>
                     <div>
-                        <Input placeHolder="Search Contacts" className="rounded-lg border-none p-6 bg-[#2c2e3b] w-[22rem]" onChange={e => searchContacts(e.target.value)} />
+                        <Input placeholder="Search Contacts" className="rounded-lg border-none p-6 bg-[#2c2e3b] w-[22rem]" onChange={e => searchContacts(e.target.value)} />
                     </div>
                     {
                         searchedContacts.length <= 0 && (<div className="flex-1 bg-[#1c1d25] md:flex flex-col justify-center items-center hidden duration-1000 transition-all">
@@ -69,7 +82,7 @@ function NewDM() {
                                 <h3 className="poppins-medium underline underline-offset-4 decoration-gray-500 decoration-1">
                                     Search new
                                     <span className="text-purple-500 font-bold "> Contacts </span>
-                                        !
+                                    !
                                 </h3>
                             </div>
                         </div>)
