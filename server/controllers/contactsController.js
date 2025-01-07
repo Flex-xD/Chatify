@@ -3,7 +3,7 @@ import User from "../models/User.js";
 export const searchContact = async (req, res) => {
     try {
         const { searchTerm } = req.body;
-        if (searchTerm) {
+        if (!searchTerm) {
             return res.status(400).json({ message: "Search term is required !" })
         }
 
@@ -26,7 +26,7 @@ export const searchContact = async (req, res) => {
                 }
             ]
         });
-
+        console.log({contacts})
         return res.status(200).json({ contacts });
     } catch (error) {
         console.log({ error });
