@@ -22,12 +22,20 @@ import { SEARCH_CONTACTS_ROUTES } from "../../../../../../utils/constants";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar"
 import { getColor } from "../../../../../../lib/utils.js"
 import {HOST} from "../../../../../../utils/constants.js"
+import { useAppStore } from "../../../../../../store/index.js";
 
 function NewDM() {
 
+    const {setSelectedChatType , setSelectedChatData} = useAppStore();
     const [openContactModal, setOpenNewContactModal] = useState(false);
-
     const [searchedContacts, setSearchedContacts] = useState([]);
+
+    const selectNewContact = (contact) => {
+        setOpenNewContactModal(false);
+        setSelectedChatType("contact");
+        setSelectedChatData(contact);
+        setSearchedContacts([]);
+    }
 
     const searchContacts = async (searchTerm) => {
         try {
@@ -77,7 +85,9 @@ function NewDM() {
                     <ScrollArea className="h-[250px]">
                         <div className="flex flex-col gap-5">
                             {
-                                searchedContacts.map((contact) => (<div key={contact._id} className="flex items-center gap-3 cursor-pointer">
+                                searchedContacts.map((contact) => (<div key={contact._id} className="flex items-center gap-3 cursor-pointer"
+                                onClick={()=>selectNewContact(contact)}
+                                >
                                     <div className="h-12 w-12 relative ">
                                         <Avatar className="h-12 w-12 rounded-full">
                                             {
