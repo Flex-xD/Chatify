@@ -21,12 +21,12 @@ import { apiClient } from "../../../../../../lib/axios.js"
 import { SEARCH_CONTACTS_ROUTES } from "../../../../../../utils/constants";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar"
 import { getColor } from "../../../../../../lib/utils.js"
-import {HOST} from "../../../../../../utils/constants.js"
+import { HOST } from "../../../../../../utils/constants.js"
 import { useAppStore } from "../../../../../../store/index.js";
 
 function NewDM() {
 
-    const {setSelectedChatType , setSelectedChatData} = useAppStore();
+    const { setSelectedChatType, setSelectedChatData } = useAppStore();
     const [openContactModal, setOpenNewContactModal] = useState(false);
     const [searchedContacts, setSearchedContacts] = useState([]);
 
@@ -71,7 +71,7 @@ function NewDM() {
                 </Tooltip>
             </TooltipProvider>
             <Dialog open={openContactModal} onChange={setOpenNewContactModal}>
-                <DialogContent className="bg-[#1c1d25] border-none text-white w-[400px] h-[400px] flex flex-col items-center">
+                <DialogContent className="bg-[#1c1d25] border-none text-white w-[400px] h-[400px] flex flex-col gap-5 items-center">
                     <DialogHeader>
                         <DialogTitle>
                             Please select a contact
@@ -82,41 +82,44 @@ function NewDM() {
                     <div>
                         <Input placeholder="Search Contacts" className="rounded-lg border-none p-6 bg-[#2c2e3b] w-[22rem]" onChange={e => searchContacts(e.target.value)} />
                     </div>
-                    <ScrollArea className="h-[250px]">
-                        <div className="flex flex-col gap-5">
-                            {
-                                searchedContacts.map((contact) => (<div key={contact._id} className="flex items-center gap-3 cursor-pointer"
-                                onClick={()=>selectNewContact(contact)}
-                                >
-                                    <div className="h-12 w-12 relative ">
-                                        <Avatar className="h-12 w-12 rounded-full">
-                                            {
-                                                contact.image ? <AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className="object-cover h-full w-full bg-black" /> : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(contact.color)}`}>
-
-                                                    {
-                                                        contact?.firstName ? contact.firstName.split("").shift() :
-                                                            contact?.email.split("").shift()
-                                                    }
-                                                </div>
-                                            }
-                                        </Avatar>
-                                    </div>
-                                    <div className="flex flex-col">
-
-                                        <span>
-                                            {contact.firstName && contact.lastName ? `${contact.firstName} ${contact.lastName}` : ""
-                                            }
-                                        </span>
-                                        <span className="text-xs">
-                                            {contact.email}
-                                        </span>
-                                    </div>
-                                </div>))
-                            }
-                        </div>
-                    </ScrollArea>
                     {
-                        searchedContacts.length <= 0 && (<div className="flex-1 bg-[#1c1d25] md:flex flex-col justify-center items-center hidden duration-1000 transition-all">
+                        searchedContacts.length > 0 && (<ScrollArea className="h-[250px]">
+                            <div className="flex flex-col gap-5">
+                                {
+                                    searchedContacts.map((contact) => (<div key={contact._id} className="flex items-center gap-3 cursor-pointer"
+                                        onClick={() => selectNewContact(contact)}
+                                    >
+                                        <div className="h-12 w-12 relative ">
+                                            <Avatar className="h-12 w-12 rounded-full">
+                                                {
+                                                    contact.image ? <AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className="object-cover h-full w-full bg-black rounded-full"/> : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(contact.color)}`}>
+
+                                                        {
+                                                            contact?.firstName ? contact.firstName.split("").shift() :
+                                                                contact?.email.split("").shift()
+                                                        }
+                                                    </div>
+                                                }
+                                            </Avatar>
+                                        </div>
+                                        <div className="flex flex-col">
+
+                                            <span>
+                                                {contact.firstName && contact.lastName ? `${contact.firstName} ${contact.lastName}` : ""
+                                                }
+                                            </span>
+                                            <span className="text-xs">
+                                                {contact.email}
+                                            </span>
+                                        </div>
+                                    </div>))
+                                }
+                            </div>
+                        </ScrollArea>)
+                    }
+
+                    {
+                        searchedContacts.length <= 0 && (<div className="flex-1 bg-[#1c1d25] md:flex mt-5 md:mt-0 flex-col justify-center items-center hidden duration-1000 transition-all">
                             <Lottie
                                 isClickToPauseDisabled={false}
                                 height={100}

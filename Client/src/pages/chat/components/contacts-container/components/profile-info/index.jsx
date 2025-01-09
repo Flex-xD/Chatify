@@ -29,7 +29,7 @@ function ProfileInfo() {
             <div className="h-12 w-12 relative ">
                 <Avatar className="h-12 w-12 rounded-full">
                     {
-                        userInfo.image ? <AvatarImage src={`${HOST}/${userInfo.image}`} alt="profile" className="object-cover h-full w-full bg-black" /> : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(userInfo.color)}`}>
+                        userInfo.image ? <AvatarImage src={`${HOST}/${userInfo.image}`} alt="profile" className="object-cover h-full w-full bg-black rounded-full" /> : <div className={`uppercase h-12 w-12 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(userInfo.color)}`}>
 
                             {
                                 userInfo?.firstName ? userInfo.firstName.split("").shift() :
