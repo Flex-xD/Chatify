@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js"
 import contactsRoutes from "./routes/contactsRoutes.js";
+import setupSocekt from "./socket.js"
 
 dotenv.config();
 
@@ -26,7 +27,9 @@ app.use(express.json());
 app.use("/api/auth" , authRoutes);
 app.use("/api/contacts" , contactsRoutes);
 
-app.listen(port ,  () => {
+const server = app.listen(port ,  () => {
     console.log(`Server running on http://localhost:${port}/`);
     connectdb();
 })
+
+setupSocekt(server);
