@@ -1,4 +1,3 @@
-import { disconnect } from "mongoose";
 import { Server as socketIOServer } from "socket.io"
 
 const setupSocket = (server) => {
@@ -9,24 +8,28 @@ const setupSocket = (server) => {
             credentials: true
         }
     });
-
     const userSocketMap = new Map();
 
     const disconnect = (socket) => {
-        console.log(`Client Disconnected : ${}`)
+        console.log(`Client Disconnected : ${socket.id}`)
+        for (const [userId , socketId] of userSocketMap.entries()) {
+            if(socketId === socket.id) {
+                userSocketMap.delete(userId);
+                break;
+            }
+        }
     }
-
-    io.on("connection" , (socket) => {
+    io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId;
 
         if (userId) {
-            userSocketMap.set(userId , socket.id);
+            userSocketMap.set(userId, socket.id);
             console.log(`User connected: ${userId} with socket ID: ${socket.id}`);
         } else {
             console.log("User ID is not provided during the connection .")
         }
 
-        socket.on("disconnect" , () =>disconnect(socket));
+        socket.on("disconnect", () => disconnect(socket));
     })
 
 }
