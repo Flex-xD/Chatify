@@ -4,7 +4,7 @@ import { RiEmojiStickerLine } from "react-icons/ri";
 import { IoSend } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
 import { useEffect } from "react";
-import { useAppStore } from "../../../../../../store";
+import { useAppStore } from "../../../../../../store/index";
 import { useSocket } from "../../../../../../context/socketContext";
 
 function MessageBar() {
@@ -37,8 +37,9 @@ function MessageBar() {
                 content:message ,
                 recipient:selectedChatData._id , 
                 messageType:"text" , 
-                fileUrl:undefined
+                fileUrl:undefined ,
             })
+            setMessage("")
         }
     }
 
