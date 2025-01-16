@@ -11,7 +11,6 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { selectedChatData, selectedChatType, addMessage } = useAppStore();
     const { userInfo } = useAppStore();
 
     useEffect(() => {
@@ -20,12 +19,14 @@ export const SocketProvider = ({ children }) => {
                 withCredentials: true,
                 query: { userId: userInfo.id }
             })
-            socket.current.on("on", () => {
+            socket.current.on("connect", () => {
                 console.log("Connected to the socket server")
             });
 
             const handleRecieveMessage = (message) => {
+                const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
                 if (selectedChatType !== undefined && (selectedChatData._id === message.sender._id || selectedChatData._id === message.recipient._id)) {
+                    console.log("msg recieved", message);
                     addMessage(message);
                 }
             };
@@ -35,7 +36,7 @@ export const SocketProvider = ({ children }) => {
                 socket.current.disconnect();
             }
         }
-    }, [userInfo])
+    }, [userInfo]);
 
     return (
         <socketContext.Provider value={socket.current}>
