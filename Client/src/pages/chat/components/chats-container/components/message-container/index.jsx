@@ -1,11 +1,35 @@
 import { useEffect, useRef } from "react";
 import { useAppStore } from "../../../../../../store/index";
+import {apiClient} from "../../../../../../lib/axios.js"
 import moment from "moment";
+import { GET_ALL_MESSAGES_ROUTE } from "../../../../../../utils/constants";
 
 function MessageContainer() {
 
     const scrollRef = useRef();
-    const { selectedChatData, selectedChatType, userInfo, selectedChatMessages } = useAppStore();
+    const { selectedChatData, selectedChatType, userInfo, selectedChatMessages , setSelectedChatMessages} = useAppStore();
+
+    useEffect(() => {
+        const getMessages = async () => {
+            try {
+                const response = await apiClient.post(GET_ALL_MESSAGES_ROUTE , 
+                    {id:selectedChatData._id} ,
+                    {withCredentials:true}
+                )
+                if (response.data.messages) {
+                    console.log(response.data.messages || "Nothing here")
+                    setSelectedChatMessages(response.data.messages);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        if (selectedChatData._id) {
+            if(selectedChatType === "contact") getMessages();
+        }
+
+    } , [selectedChatData , selectedChatType ,setSelectedChatMessages ]);
+
 
     useEffect(() => {
         if (scrollRef.current) {
